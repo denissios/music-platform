@@ -1,6 +1,18 @@
-import {Body, Controller, Delete, Get, Patch, Post, Put, Req, UseGuards} from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Patch,
+    Post,
+    Put,
+    Req,
+    UploadedFiles,
+    UseGuards,
+    UseInterceptors
+} from '@nestjs/common';
 import {PlaylistService} from "./services/playlist.service";
-import {ApiBearerAuth, ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
+import {ApiBearerAuth, ApiConsumes, ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
 import {Roles} from "../auth/decorators/roles-auth.decorator";
 import {RolesGuard} from "../auth/guards/roles.guard";
 import {Playlist} from "./schemas/playlist.schema";
@@ -10,11 +22,14 @@ import {IdParam} from "../common/decorators/idParam.decorator";
 import {CheckPolicies} from "../auth/decorators/policies.decorator";
 import {PoliciesGuard} from "../auth/guards/policies.guard";
 import {
-    DeletePlaylistPolicyHandler,
+    DeletePlaylistPolicyHandler, GetPlaylistPolicyHandler,
     UpdatePlaylistPolicyHandler
 } from "../auth/handlers/handlers";
 import {UpdatePlaylistDto} from "./dto/update-playlist.dto";
 import {UpdateFieldPlaylistDto} from "./dto/update-field-playlist.dto";
+import {GetPlaylistsDto} from "./dto/get-playlists.dto";
+import {GetPlaylistDto} from "./dto/get-playlist.dto";
+import {FileFieldsInterceptor} from "@nestjs/platform-express";
 
 @ApiTags('playlist')
 @Controller('playlist')
@@ -24,12 +39,18 @@ export class PlaylistController {
     @ApiOperation({summary: 'Создать плейлист'})
     @ApiResponse({status: 200, type: Playlist})
     @ApiBearerAuth('JWT-auth')
+    @ApiConsumes('multipart/form-data')
     @Roles('USER')
     @UseGuards(RolesGuard)
     @Post()
+    @UseInterceptors(FileFieldsInterceptor([
+        { name: 'image', maxCount: 1 }
+    ]))
     createPlaylist(@Req() request: Request,
+                   @UploadedFiles() files,
                    @Body() dto: CreatePlaylistDto) {
-        return this.playlistService.createPlaylist(dto, request.cookies['accessToken']);
+        const {image} = files;
+        return this.playlistService.createPlaylist(dto, image, request.cookies['accessToken']);
     }
 
     @ApiOperation({summary: 'Удалить плейлист'})
@@ -46,27 +67,52 @@ export class PlaylistController {
     @ApiOperation({summary: 'Изменить плейлист'})
     @ApiResponse({status: 200, type: Playlist})
     @ApiBearerAuth('JWT-auth')
+    @ApiConsumes('multipart/form-data')
     @Roles('USER')
     @CheckPolicies(new UpdatePlaylistPolicyHandler())
     @UseGuards(RolesGuard, PoliciesGuard)
     @Put(':id')
-    updatePlaylist(@IdParam('id') id: string, @Body() dto: UpdatePlaylistDto) {
-        return this.playlistService.updatePlaylist(id, dto);
+    @UseInterceptors(FileFieldsInterceptor([
+        { name: 'image', maxCount: 1 }
+    ]))
+    updatePlaylist(@IdParam('id') id: string,
+                   @UploadedFiles() files,
+                   @Body() dto: UpdatePlaylistDto) {
+        const {image} = files;
+        return this.playlistService.updatePlaylist(id, dto, image);
     }
 
     @ApiOperation({summary: 'Изменить плейлист'})
     @ApiResponse({status: 200, type: Playlist})
     @ApiBearerAuth('JWT-auth')
+    @ApiConsumes('multipart/form-data')
     @Roles('USER')
     @CheckPolicies(new UpdatePlaylistPolicyHandler())
     @UseGuards(RolesGuard, PoliciesGuard)
     @Patch(':id')
-    updateFieldPlaylist(@IdParam('id') id: string, @Body() dto: UpdateFieldPlaylistDto) {
-        return this.playlistService.updateFieldPlaylist(id, dto);
+    @UseInterceptors(FileFieldsInterceptor([
+        { name: 'image', maxCount: 1 }
+    ]))
+    updateFieldPlaylist(@IdParam('id') id: string,
+                        @UploadedFiles() files,
+                        @Body() dto: UpdateFieldPlaylistDto) {
+        const {image} = files;
+        return this.playlistService.updateFieldPlaylist(id, dto, image);
+    }
+
+    @ApiOperation({summary: 'Получить плейлист'})
+    @ApiResponse({status: 200, type: GetPlaylistDto})
+    @ApiBearerAuth('JWT-auth')
+    @Roles('USER')
+    @CheckPolicies(new GetPlaylistPolicyHandler())
+    @UseGuards(RolesGuard, PoliciesGuard)
+    @Get(':id')
+    getPlaylist(@IdParam('id') id: string) {
+        return this.playlistService.getPlaylist(id);
     }
 
     @ApiOperation({summary: 'Получить список плейлистов пользователя'})
-    @ApiResponse({status: 200, type: [Playlist]})
+    @ApiResponse({status: 200, type: [GetPlaylistsDto]})
     @ApiBearerAuth('JWT-auth')
     @Roles('USER')
     @UseGuards(RolesGuard)

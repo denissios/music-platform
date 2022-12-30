@@ -1,0 +1,73 @@
+.searchFavouriteTracks {
+    width: 100% !important;
+    margin-right: 30px !important;
+    border-radius: 6px !important;
+}
+.searchFavouriteTracks input::placeholder {
+    position: relative;
+    top: 1px;
+    color: var(--color-grey);
+}
+
+.sortFavouriteTracks {
+    width: 150px !important;
+}
+
+.filters {
+    display: flex;
+    padding: 10px;
+    border-bottom: 1px solid var(--color-border-grey);
+}
+
+
+.selectOption div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.activeOptionIcon {
+    position: relative;
+    top: -1px;
+    color: var(--color-purple);
+    font-size: 20px !important;
+}
+
+
+.trackListHeaderWrapper {
+    display: flex;
+}
+
+.trackListHeaderWrapper > div {
+    padding: 5px 10px;
+}
+
+.trackListHeaderWrapper > div:not(:last-child) {
+    border-right: 1px solid var(--color-border-grey);
+}
+
+.trackListHeader {
+    flex: 4;
+}
+
+.time {
+    flex: 0.5;
+    text-align: center;
+}
+
+.preloaderWrapper {
+    margin-top: 30px;
+}
+
+.emptyTracks {
+    margin-top: 70px;
+    text-align: center;
+}
+
+
+
+@media screen and (max-width: 480px) {
+    .searchFavouriteTracks input::placeholder {
+        top: 0;
+        font-size: 12px;
+    }
+}

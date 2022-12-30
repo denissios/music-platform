@@ -1,0 +1,143 @@
+.text__header {
+    font-family: Roboto;
+    font-style: normal;
+    font-size: 48px;
+    line-height: 80px;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+}
+
+.text__subheader1 {
+    font-family: Roboto;
+    font-style: normal;
+    font-size: 28px;
+    line-height: 28px;
+    letter-spacing: 0.01em;
+}
+
+.text__subheader2 {
+    font-family: Roboto;
+    font-style: normal;
+    font-size: 20px;
+    line-height: 28px;
+    letter-spacing: 0.01em;
+}
+
+.text__body {
+    font-family: Roboto;
+    font-style: normal;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0.01em;
+}
+
+.text__small {
+    font-family: Roboto;
+    font-style: normal;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0.01em;
+}
+
+.text__xs {
+    font-family: Roboto;
+    font-style: normal;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 0.01em;
+}
+
+.text__xxs {
+    font-family: Roboto;
+    font-style: normal;
+    font-size: 10px;
+    line-height: 14px;
+    letter-spacing: 0.01em;
+}
+
+.text__bold {
+    font-family: Roboto-Bold;
+}
+
+.text__italic {
+    font-family: Roboto-Italic;
+}
+
+.text__bold-italic {
+    font-family: Roboto-BoldItalic;
+}
+
+.text__primary {
+    color: var(--color-primary);
+}
+
+.text__purple {
+    color: var(--color-purple);
+}
+
+.text__white {
+    color: var(--color-white);
+}
+
+.text__grey {
+    color: var(--color-grey);
+}
+
+.text__medium-grey {
+    color: var(--color-medium-grey);
+}
+
+.text__light-grey {
+    color: var(--color-light-grey);
+}
+
+.text__red {
+    color: var(--color-red);
+}
+
+.text__green {
+    color: var(--color-green);
+}
+
+.text__inherit {
+    color: inherit;
+}
+
+
+
+@media screen and (max-width: 480px) {
+    .text__header {
+        font-size: 35px;
+        line-height: 50px;
+    }
+
+    .text__subheader1 {
+        font-size: 26px;
+        line-height: 26px;
+    }
+
+    .text__subheader2 {
+        font-size: 18px;
+        line-height: 26px;
+    }
+
+    .text__body {
+        font-size: 14px;
+        line-height: 22px;
+    }
+
+    .text__small {
+        font-size: 12px;
+        line-height: 18px;
+    }
+
+    .text__xs {
+        font-size: 11px;
+        line-height: 14px;
+    }
+
+    .text__xxs {
+        font-size: 8px;
+        line-height: 12px;
+    }
+}

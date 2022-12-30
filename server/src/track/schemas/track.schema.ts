@@ -25,6 +25,10 @@ export class Track {
     @Prop()
     audio: string;
 
+    @ApiProperty({description: 'Длительность'})
+    @Prop()
+    duration: number;
+
     @ApiProperty({example: 1, description: 'Количество прослушиваний'})
     @Prop({type: Number, default: 0})
     plays: number;

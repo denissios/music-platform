@@ -13,4 +13,8 @@ export class UpdateFieldPlaylistDto {
     @Length(1, 100, {message: 'Длина от 1 до 100 символов'})
     @IsOptional()
     readonly description: string;
+
+    @ApiProperty({type: 'string', format: 'binary'})
+    @IsOptional()
+    readonly image: any;
 }

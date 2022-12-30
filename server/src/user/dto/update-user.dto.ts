@@ -8,7 +8,12 @@ export class UpdateUserDto {
     @Length(4, 40, {message: 'Длина от 4 до 40 символов'})
     readonly email: string;
 
-    @ApiProperty({example: '123456', description: 'Пароль'})
+    @ApiProperty({example: '123456', description: 'Старый пароль'})
+    @IsString({message: 'Должно быть строкой'})
+    @Length(4, 16, {message: 'Длина от 4 до 16 символов'})
+    readonly oldPassword: string;
+
+    @ApiProperty({example: '123456', description: 'Новый пароль'})
     @IsString({message: 'Должно быть строкой'})
     @Length(4, 16, {message: 'Длина от 4 до 16 символов'})
     readonly password: string;

@@ -9,7 +9,13 @@ export class UpdateFieldUserDto {
     @IsOptional()
     readonly email: string;
 
-    @ApiProperty({example: '123456', description: 'Пароль'})
+    @ApiProperty({example: '123456', description: 'Старый пароль'})
+    @IsString({message: 'Должно быть строкой'})
+    @Length(4, 16, {message: 'Длина от 4 до 16 символов'})
+    @IsOptional()
+    readonly oldPassword: string;
+
+    @ApiProperty({example: '123456', description: 'Новый пароль'})
     @IsString({message: 'Должно быть строкой'})
     @Length(4, 16, {message: 'Длина от 4 до 16 символов'})
     @IsOptional()

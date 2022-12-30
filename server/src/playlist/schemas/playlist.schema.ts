@@ -17,6 +17,10 @@ export class Playlist {
     @Prop({type: String, required: true})
     description: string;
 
+    @ApiProperty({description: 'Картинка'})
+    @Prop()
+    image: string;
+
     @ApiProperty({type: String})
     @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'User'})
     owner: User;

@@ -1,0 +1,11 @@
+.adminPanelWrapper {
+    padding: 40px;
+}
+
+
+
+@media screen and (max-width: 480px) {
+    .adminPanelWrapper {
+        padding: 5px;
+    }
+}

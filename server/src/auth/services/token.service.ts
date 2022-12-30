@@ -45,7 +45,7 @@ export class TokenService {
     }
 
     generateTokens(user: UserDocument) {
-        const payload = {id: user._id, email: user.email, roles: user.roles};
+        const payload = {id: user._id, email: user.email, name: user.name, roles: user.roles};
         const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '30m'});
         const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {expiresIn: '30d'});
         return {
@@ -54,11 +54,19 @@ export class TokenService {
         }
     }
 
+    validateResetPasswordToken(token, secret): JwtPayload {
+        try {
+            return jwt.verify(token, secret) as JwtPayload;
+        } catch (e) {
+            return null;
+        }
+    }
+
     validateAccessToken(accessToken): JwtPayload {
         try {
             return jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET) as JwtPayload;
         } catch (e) {
-            return null
+            return null;
         }
     }
 
@@ -66,7 +74,14 @@ export class TokenService {
         try {
             return jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET) as JwtPayload;
         } catch (e) {
-            return null
+            return null;
         }
+    }
+
+    usePasswordHashToMakeToken(user: UserDocument) {
+        const secret = process.env.JWT_ACCESS_SECRET + user.password + "-" + user._id.getTimestamp();
+        return jwt.sign({id: user._id}, secret, {
+            expiresIn: 3600 // 1 hour
+        })
     }
 }

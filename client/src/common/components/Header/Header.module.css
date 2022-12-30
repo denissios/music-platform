@@ -1,0 +1,34 @@
+.burgerIcon {
+    margin-left: 20px;
+    font-size: 32px !important;
+    color: var(--color-primary);
+}
+.burgerIcon:hover {
+    cursor: pointer;
+    color: var(--color-purple-hover);
+}
+
+.headerWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+}
+
+.iconWrapper {
+    display: flex;
+    align-items: center;
+    margin-right: 15px;
+}
+
+.icon {
+    cursor: pointer;
+    color: var(--color-primary);
+}
+.icon:hover {
+    color: var(--color-purple-hover);
+}
+
+.volumeWrapper {
+    width: 100%;
+}

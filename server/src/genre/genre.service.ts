@@ -16,7 +16,7 @@ export class GenreService {
     }
 
     async getAllGenres() {
-        return this.genreRepository.find({}, 'name');
+        return this.genreRepository.find({}, '-tracks -__v');
     }
 
     async getGenreByName(name: string) {

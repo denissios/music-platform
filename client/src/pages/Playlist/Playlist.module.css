@@ -1,0 +1,60 @@
+.playlistInfoWrapper {
+    display: flex;
+    align-items: center;
+    position: relative;
+    margin: 40px 10px 40px 40px;
+}
+
+.playlistHeaderWrapper {
+    display: flex;
+    align-items: center;
+}
+.changePlaylistIcon {
+    margin-left: 10px;
+    color: var(--color-primary);
+}
+.changePlaylistIcon:hover {
+    color: var(--color-purple-hover);
+    cursor: pointer;
+}
+
+.playlistInfo {
+    margin-left: 40px;
+    flex: 1;
+}
+
+.playlistDescription {
+    margin-top: 10px;
+}
+
+.playlistPicture {
+    border-radius: 6px;
+}
+
+.deletePlaylistWrapper {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 5px 10px;
+    border: 1px solid var(--color-border-grey);
+    border-radius: 6px;
+}
+.deletePlaylistWrapper:hover {
+    cursor: pointer;
+}
+.deletePlaylistWrapper:hover > .deletePlaylistText, .deletePlaylistWrapper:hover > .icon {
+    color: var(--color-purple-hover);
+}
+.icon {
+    position: relative;
+    top: -1px;
+    margin-left: 8px;
+    color: var(--color-primary);
+}
+
+.emptyPlaylist {
+    margin-top: 70px;
+    text-align: center;
+}

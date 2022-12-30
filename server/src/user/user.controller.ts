@@ -1,4 +1,4 @@
-import {Body, Controller, Delete, Get, Param, Patch, Post, Put, Req, Res, UseGuards} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, Req, Res, UseGuards} from '@nestjs/common';
 import {ApiBearerAuth, ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
 import {User} from "./schemas/user.schema";
 import {RegistrationDto} from "./dto/registration.dto";
@@ -15,6 +15,11 @@ import {UUIDParam} from "../common/decorators/uuidParam.decorator";
 import {CheckPolicies} from "../auth/decorators/policies.decorator";
 import {GetUserPolicyHandler} from "../auth/handlers/handlers";
 import {PoliciesGuard} from "../auth/guards/policies.guard";
+import {ResetPasswordDto} from "./dto/ResetPassword.dto";
+import {GetUserDto, Role} from "./dto/get-user.dto";
+import {IntQuery} from "../common/decorators/intQuery.decorator";
+import {GetSearchedUsersDto} from "./dto/get-searched-users.dto";
+import {UnbanUserDto} from "./dto/unban-user.dto";
 
 @ApiTags('user')
 @Controller('user')
@@ -40,6 +45,18 @@ export class UserController {
         return response.redirect(`${process.env.CLIENT_URL}`);
     }
 
+    @ApiOperation({summary: 'Найти пользователя'})
+    @ApiResponse({status: 200, type: GetSearchedUsersDto})
+    @ApiBearerAuth('JWT-auth')
+    @Roles('ADMIN')
+    @UseGuards(RolesGuard)
+    @Get('/search')
+    searchUser(@Query('value') value: string,
+               @IntQuery('page') page: number,
+               @IntQuery('limit') limit: number) {
+        return this.userService.searchUser(value, page, limit);
+    }
+
     @ApiOperation({summary: 'Получить всех пользователей'})
     @ApiResponse({status: 200, type: [User]})
     @ApiBearerAuth('JWT-auth')
@@ -51,7 +68,7 @@ export class UserController {
     }
 
     @ApiOperation({summary: 'Получить пользователя'})
-    @ApiResponse({status: 200, type: User})
+    @ApiResponse({status: 200, type: GetUserDto})
     @ApiBearerAuth('JWT-auth')
     @Roles('USER')
     @CheckPolicies(new GetUserPolicyHandler())
@@ -81,6 +98,16 @@ export class UserController {
         return this.userService.addRole(dto);
     }
 
+    @ApiOperation({summary: 'Получить роли пользователя'})
+    @ApiResponse({status: 200, type: [Role]})
+    @ApiBearerAuth('JWT-auth')
+    @Roles('ADMIN')
+    @UseGuards(RolesGuard)
+    @Get('/role/:id')
+    getRoles(@IdParam('id') id: string) {
+        return this.userService.getRoles(id);
+    }
+
     @ApiOperation({summary: 'Забанить пользователя'})
     @ApiResponse({status: 200, type: BanUserDto})
     @ApiBearerAuth('JWT-auth')
@@ -89,6 +116,26 @@ export class UserController {
     @Post('/ban')
     banUser(@Body() dto: BanUserDto) {
         return this.userService.banUser(dto);
+    }
+
+    @ApiOperation({summary: 'Разбанить пользователя'})
+    @ApiResponse({status: 200, type: UnbanUserDto})
+    @ApiBearerAuth('JWT-auth')
+    @Roles('ADMIN')
+    @UseGuards(RolesGuard)
+    @Post('/unban')
+    unbanUser(@Body() dto: UnbanUserDto) {
+        return this.userService.unbanUser(dto);
+    }
+
+    @ApiOperation({summary: 'Проверка на бан'})
+    @ApiResponse({status: 200, type: Boolean})
+    @ApiBearerAuth('JWT-auth')
+    @Roles('ADMIN')
+    @UseGuards(RolesGuard)
+    @Get('/check-ban/:id')
+    isBanUser(@IdParam('id') id: string) {
+        return this.userService.isBanUser(id);
     }
 
     @ApiOperation({summary: 'Изменить пользователя'})
@@ -113,5 +160,14 @@ export class UserController {
                     @IdParam('id') id: string,
                     @Body() dto: UpdateFieldUserDto) {
         return this.userService.updateFieldUser(id, dto, request.cookies['accessToken']);
+    }
+
+    @ApiOperation({summary: 'Восстановить пароль'})
+    @ApiResponse({status: 200})
+    @Patch('/reset-password/:id/:token')
+    resetPassword(@IdParam('id') id: string,
+                  @Param('token') token: string,
+                  @Body() dto: ResetPasswordDto) {
+        return this.userService.resetPassword(id, token, dto);
     }
 }

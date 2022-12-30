@@ -1,0 +1,131 @@
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    max-height: 100%;
+}
+
+.closeIcon {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    font-size: 28px !important;
+    color: var(--color-primary);
+}
+.closeIcon:hover {
+    cursor: pointer;
+    color: var(--color-purple-hover);
+}
+
+.search {
+    font-size: 13px !important;
+    border-radius: 6px !important;
+    margin-bottom: 20px;
+}
+
+.search input::placeholder {
+    position: relative;
+    top: 1px;
+    color: var(--color-grey);
+}
+
+.menuElem {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 5px;
+}
+.menuElem:not(:first-child) {
+    margin-top: 5px;
+}
+.menuElem:hover .playlistsTop, .menuElem:hover .playlistsBottom, .menuElem:hover .subheaderIcon {
+    color: var(--color-purple-hover);
+}
+
+.subheaderIconWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 24px;
+}
+.subheaderIcon {
+    color: var(--color-purple);
+    font-size: 24px;
+}
+.favouriteSongsIcon {
+    font-size: 22px;
+}
+
+.subheader {
+    position: relative;
+    top: 1px;
+    margin-left: 5px;
+}
+.subheader:hover {
+    color: var(--color-purple-hover);
+}
+
+
+.arrowIcon {
+    color: var(--color-purple);
+    position: relative;
+    top: 1px;
+    font-size: 22px;
+    transition: all 0.3s ease-in-out;
+}
+.playlistsBottom {
+    transform: rotate(0);
+}
+.playlistsTop {
+    transform: rotate(180deg);
+}
+
+.playlistsWrapper {
+    padding-left: 30px;
+    overflow: hidden;
+    transition: all 0.3s ease-in-out;
+}
+
+.playlists {
+    max-height: 100%;
+}
+.playlists::-webkit-scrollbar {
+    width: 4px;
+    border: 1px solid var(--color-light-grey);
+}
+.playlists::-webkit-scrollbar-thumb {
+    background-color: var(--color-purple);
+}
+.isOverflowPlaylists {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.playlist div {
+    padding: 5px 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.playlist:hover div {
+    color: var(--color-purple-hover)
+}
+.playlist:not(:last-child) div {
+    border-bottom: 1px solid var(--color-border-grey);
+}
+
+.addPlaylistIcon {
+    display: none !important;
+    position: relative;
+    top: 1px;
+}
+.playlistMenuElem:hover .addPlaylistIcon {
+    display: block !important;
+}
+
+
+
+@media screen and (max-width: 992px) {
+    .search {
+        margin-top: 30px;
+    }
+}

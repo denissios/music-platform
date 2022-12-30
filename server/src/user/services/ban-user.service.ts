@@ -16,18 +16,22 @@ export class BanUserService {
     }
 
     async deleteBanForUser(id: string) {
-        return this.banUserRepository.deleteOne({user: id})
+        return this.banUserRepository.deleteOne({user: id});
     }
 
     async checkBan(id: string) {
-        const banData = await this.banUserRepository.findOne({user: id})
+        const banData = await this.banUserRepository.findOne({user: id});
         if(banData) {
             const a = [
-                    "Вы забанены",
-                    `Причина - ${banData.banReason}`,
+                    "Вы забанены!\n\n" +
+                    `Причина - ${banData.banReason}\n\n` +
                     `Комментарий - ${banData.description}`
                 ]
             throw new ForbiddenException(a)
         }
+    }
+
+    async isBanned(id: string): Promise<boolean> {
+        return !!await this.banUserRepository.findOne({user: id});
     }
 }

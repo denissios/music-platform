@@ -4,6 +4,7 @@ import {ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
 import {RegistrationDto} from "../user/dto/registration.dto";
 import { Response, Request } from 'express';
 import {LoginDto} from "../user/dto/login.dto";
+import {ForgotPasswordDto} from "./dto/forgot-password.dto";
 
 @ApiTags('auth')
 @Controller('auth')
@@ -48,5 +49,12 @@ export class AuthController {
         const userData = await this.authService.refresh(request.cookies['refreshToken']);
         response.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
         response.cookie('accessToken', userData.accessToken, {maxAge: 30 * 60 * 1000});
+    }
+
+    @ApiOperation({summary: 'Forgot password'})
+    @ApiResponse({status: 200})
+    @Post('/forgot')
+    async forgotPassword(@Body() dto: ForgotPasswordDto) {
+        await this.authService.forgotPassword(dto);
     }
 }

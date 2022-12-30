@@ -5,6 +5,7 @@ import {Roles} from "../auth/decorators/roles-auth.decorator";
 import {RolesGuard} from "../auth/guards/roles.guard";
 import {CreateGenreDto} from "./dto/create-genre.dto";
 import {Genre} from "./schemas/genre.schema";
+import {GetGenreDto} from "./dto/get-genre.dto";
 
 @ApiTags('genre')
 @Controller('genre')
@@ -22,7 +23,7 @@ export class GenreController {
     }
 
     @ApiOperation({summary: 'Получить все жанры'})
-    @ApiResponse({status: 200, type: [Genre]})
+    @ApiResponse({status: 200, type: [GetGenreDto]})
     @ApiBearerAuth('JWT-auth')
     @Roles('USER')
     @UseGuards(RolesGuard)

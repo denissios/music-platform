@@ -1,0 +1,113 @@
+.inputRange {
+    display: flex;
+    align-items: center;
+    width: 50%;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.volumeIcon {
+    order: 1;
+    color: var(--color-primary);
+}
+
+.input {
+    order: 2;
+    margin-left: 5px;
+}
+
+.inputRange input[type=range] {
+    width: 100%;
+    background: transparent;
+    -webkit-appearance: none;
+}
+
+.inputRange input[type=range]:hover {
+    transform: scale(1.1);
+    transition: transform 0.3s ease-in-out;
+}
+.inputRange input[type=range]:hover + .volumeIcon {
+    transform: scale(1.1) translateX(-4px);
+    transition: transform 0.3s ease-in-out;
+}
+
+.inputRange input[type=range]:focus {
+    outline: none;
+}
+
+
+
+.inputRange input[type=range]::-webkit-slider-runnable-track {
+    background: var(--color-medium-grey);
+    border: 0;
+    border-radius: 3px;
+    width: 100%;
+    height: 6px;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.inputRange input[type=range]::-webkit-slider-thumb {
+    width: 0;
+    height: 0;
+    -webkit-appearance: none;
+    box-shadow: calc(-100vh / 5) 0 0 calc(100vh / 5) var(--color-purple);
+}
+.inputRange input[type=range]:hover::-webkit-slider-thumb {
+    box-shadow: calc(-100vh / 5) 0 0 calc(100vh / 5) var(--color-purple-hover);
+}
+
+
+
+.inputRange input[type=range]::-moz-range-track {
+    background: var(--color-medium-grey);
+    border: 0;
+    border-radius: 3px;
+    width: 100%;
+    height: 6px;
+    cursor: pointer;
+}
+.inputRange input[type=range]::-moz-range-thumb {
+    width: 0;
+    height: 0;
+    box-shadow: calc(-100vh / 5) 0 0 calc(100vh / 5) var(--color-purple);
+}
+.inputRange input[type=range]:hover::-moz-range-thumb {
+    box-shadow: calc(-100vh / 5) 0 0 calc(100vh / 5) var(--color-purple-hover);
+}
+
+
+
+.inputRange input[type=range]::-ms-track {
+    background: var(--color-medium-grey);
+    border: 0;
+    border-radius: 3px;
+    width: 100%;
+    height: 6px;
+    cursor: pointer;;
+}
+.inputRange input[type=range]::-ms-thumb {
+    width: 0;
+    height: 0;
+    box-shadow: calc(-100vh / 5) 0 0 calc(100vh / 5) var(--color-purple);
+}
+.inputRange input[type=range]:hover::-ms-thumb {
+    box-shadow: calc(-100vh / 5) 0 0 calc(100vh / 5) var(--color-purple-hover);
+}
+
+
+
+@media screen and (max-width: 992px) {
+    .inputRange {
+        width: 60%;
+    }
+}
+
+
+
+@media screen and (max-width: 480px) {
+    .inputRange {
+        width: 80%;
+    }
+}

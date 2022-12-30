@@ -1,5 +1,5 @@
 import {ApiProperty} from "@nestjs/swagger";
-import {IsMongoId, IsNotEmpty, IsString, Length} from "class-validator";
+import {IsString, Length} from "class-validator";
 
 export class CreatePlaylistDto {
     @ApiProperty({example: 'Название', description: 'Название плейлиста'})
@@ -11,4 +11,7 @@ export class CreatePlaylistDto {
     @IsString({message: 'Должно быть строкой'})
     @Length(1, 100, {message: 'Длина от 1 до 100 символов'})
     readonly description: string;
+
+    @ApiProperty({type: 'string', format: 'binary'})
+    readonly image: any;
 }

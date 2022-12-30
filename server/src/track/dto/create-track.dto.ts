@@ -1,5 +1,5 @@
 import {ApiProperty} from "@nestjs/swagger";
-import {IsMongoId, IsNotEmpty, IsString, Length} from "class-validator";
+import {IsString, Length} from "class-validator";
 
 export class CreateTrackDto {
     @ApiProperty({example: 'Название', description: 'Название трека'})
@@ -16,4 +16,10 @@ export class CreateTrackDto {
     @IsString({message: 'Должно быть строкой'})
     @Length(1, 30, {message: 'Длина от 1 до 30 символов'})
     readonly genreName: string;
+
+    @ApiProperty({type: 'string', format: 'binary'})
+    readonly image: any;
+
+    @ApiProperty({type: 'string', format: 'binary'})
+    readonly audio: any;
 }

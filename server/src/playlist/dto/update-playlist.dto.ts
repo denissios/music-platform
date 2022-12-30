@@ -11,4 +11,7 @@ export class UpdatePlaylistDto {
     @IsString({message: 'Должно быть строкой'})
     @Length(1, 100, {message: 'Длина от 1 до 100 символов'})
     readonly description: string;
+
+    @ApiProperty({type: 'string', format: 'binary'})
+    readonly image: any;
 }

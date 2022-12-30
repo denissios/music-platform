@@ -1,5 +1,5 @@
 run-dev:
-	docker-compose up
+	docker-compose -f docker-compose.yml up
 
 build-dev:
-	docker-compose up --build
+	docker-compose -f docker-compose.yml up --build

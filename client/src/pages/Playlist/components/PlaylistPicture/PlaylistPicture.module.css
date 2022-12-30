@@ -1,0 +1,17 @@
+.trackImage {
+    width: 100%;
+}
+
+.emptyPicture {
+    position: relative;
+    background-color: var(--color-medium-grey);
+}
+
+.emptyIconTrack {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 70px !important;
+    color: var(--color-grey);
+}

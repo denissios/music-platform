@@ -1,0 +1,120 @@
+.trackOptionsWrapper {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 20;
+    border-radius: 8px;
+}
+.visibleTrackOptionsWrapper {
+    display: block;
+    animation: fadeInModal 0.2s ease-in-out;
+}
+
+.trackOptions {
+    position: absolute;
+    right: 15px;
+    width: 200px;
+    cursor: pointer;
+    background-color: var(--color-light-grey);
+    border: 1px solid var(--color-border-grey);
+    border-radius: 8px;
+    -webkit-box-shadow: 0 0 10px 1px var(--color-box-shadow-medium);
+    -moz-box-shadow: 0 0 10px 1px var(--color-box-shadow-medium);
+    box-shadow: 0 0 10px 1px var(--color-box-shadow-medium);
+}
+
+.option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    padding: 10px;
+}
+.option:hover {
+    background-color: var(--background-color);
+}
+.option:first-child:hover {
+    border-radius: 6px 6px 0 0;
+}
+.option:last-child:hover {
+    border-radius: 0 0 6px 6px;
+}
+.option:not(:first-child) {
+    border-top: 1px solid var(--color-border-grey);
+}
+
+.icon {
+    font-size: 20px !important;
+    color: var(--color-primary);
+}
+.option:hover > .icon {
+    color: var(--color-purple-hover);
+}
+
+.playlists {
+    visibility: hidden;
+    top: 0;
+    right: -200px;
+    max-height: 250px;
+    overflow: auto;
+    border-top-left-radius: 0;
+}
+.playlists::-webkit-scrollbar {
+    width: 4px;
+    border: 1px solid var(--color-light-grey);
+}
+.playlists::-webkit-scrollbar-thumb {
+    background-color: var(--color-purple);
+}
+.option:hover > .playlists {
+    visibility: visible;
+    animation: fadeInModalPlaylists 0.2s ease-in-out;
+}
+
+
+
+@media screen and (max-width: 520px) {
+    .playlists {
+        top: 40px;
+        left: -1px;
+        border-top-left-radius: 8px;
+    }
+}
+
+
+
+@keyframes fadeInModal {
+    0% {
+        display: none;
+        opacity: 0;
+    }
+
+    1% {
+        display: block;
+        opacity: 0;
+    }
+
+    100% {
+        display: block;
+        opacity: 1;
+    }
+}
+@keyframes fadeInModalPlaylists {
+    0% {
+        visibility: hidden;
+        opacity: 0;
+    }
+
+    1% {
+        visibility: visible;
+        opacity: 0;
+    }
+
+    100% {
+        visibility: visible;
+        opacity: 1;
+    }
+}

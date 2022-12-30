@@ -17,6 +17,8 @@ import {MailService} from "./mail.service";
 import {FavouriteSongsService} from "../../playlist/services/favourite-songs.service";
 import {TrackService} from "../../track/track.service";
 import {PlaylistService} from "../../playlist/services/playlist.service";
+import {ResetPasswordDto} from "../dto/ResetPassword.dto";
+import {UnbanUserDto} from "../dto/unban-user.dto";
 
 @Injectable()
 export class UserService {
@@ -60,6 +62,26 @@ export class UserService {
             return;
         }
         await this.userRepository.findByIdAndUpdate(linkData.user,{isActivated: true});
+    }
+
+    async searchUser(value: string, page: number, limit: number) {
+        if(page < 1 || limit < 0) {
+            throw new HttpException('Неверные page или limit!', HttpStatus.BAD_REQUEST);
+        }
+
+        const searchedUsers = await this.userRepository.find({
+                $or: [{name: {$regex: new RegExp(value, 'i')}}, {email: {$regex: new RegExp(value, 'i')}}]
+            },
+            {password: 0, roles: 0, __v: 0},
+            {skip: (page - 1) * limit, limit: limit});
+        const totalCount = await this.userRepository.count({
+            $or: [{name: {$regex: new RegExp(value, 'i')}}, {email: {$regex: new RegExp(value, 'i')}}]
+        });
+
+        return {
+            searchedUsers,
+            totalCount
+        }
     }
 
     async getAllUsers() {
@@ -109,6 +131,14 @@ export class UserService {
         return dto;
     }
 
+    async getRoles(userId: string) {
+        if(!await this.userRepository.findById(userId)) {
+            throw new HttpException('Пользователь не найден!', HttpStatus.NOT_FOUND);
+        }
+        const user = await this.userRepository.findById(userId).populate('roles', 'name');
+        return user.roles;
+    }
+
     async banUser(dto: BanUserDto) {
         if(!await this.userRepository.findById(dto.userId)) {
             throw new HttpException('Пользователь не найден!', HttpStatus.NOT_FOUND);
@@ -118,23 +148,42 @@ export class UserService {
         return dto;
     }
 
+    async unbanUser(dto: UnbanUserDto) {
+        if(!await this.userRepository.findById(dto.userId)) {
+            throw new HttpException('Пользователь не найден!', HttpStatus.NOT_FOUND);
+        }
+        await this.banUserService.deleteBanForUser(dto.userId);
+        return dto;
+    }
+
+    async isBanUser(userId: string) {
+        return await this.banUserService.isBanned(userId);
+    }
+
     async updateUser(id: string, dto: UpdateUserDto, accessToken: string) {
-        if(this.tokenService.validateAccessToken(accessToken).id !== id) {
+        if(this.tokenService.validateAccessToken(accessToken)?.id !== id) {
             throw new HttpException('Нет доступа!', HttpStatus.FORBIDDEN);
         }
-        if(await this.getUserByEmail(dto?.email)) {
+        const candidate = await this.getUserByEmail(dto?.email);
+        if(candidate && candidate.id !== id) {
             throw new HttpException('Пользователь с таким email уже существует!', HttpStatus.BAD_REQUEST);
         }
 
-        const hashPassword = await bcrypt.hash(dto.password, 5);
-        const user = await this.userRepository.findByIdAndUpdate(
-            id,
-            {...dto, password: hashPassword, isActivated: false},
-            {new: true, fields: {password: 0, __v: 0}}
-        );
+        let user = await this.userRepository.findById(id);
         if(!user) {
             throw new HttpException('Пользователь не найден!', HttpStatus.NOT_FOUND);
         }
+        if(!dto?.oldPassword || !dto?.password || !await bcrypt.compare(dto?.oldPassword, user?.password)) {
+            throw new HttpException('Старый пароль неверный!', HttpStatus.BAD_REQUEST);
+        }
+
+        const hashPassword = await bcrypt.hash(dto?.password, 5);
+        user = await this.userRepository.findByIdAndUpdate(
+            id,
+            {...dto, password: hashPassword, isActivated: !!candidate},
+            {new: true, fields: {password: 0, __v: 0}}
+        );
+
         await this.activateUserService.deleteActivationLinkForUser(id);
         await this.generateAndSaveActivationLink(id, dto?.email);
 
@@ -142,24 +191,31 @@ export class UserService {
     }
 
     async updateFieldUser(id: string, dto: UpdateFieldUserDto, accessToken: string) {
-        if(this.tokenService.validateAccessToken(accessToken).id !== id) {
+        if(this.tokenService.validateAccessToken(accessToken)?.id !== id) {
             throw new HttpException('Нет доступа!', HttpStatus.FORBIDDEN);
         }
-        if(!await this.userRepository.findById(id)) {
+        let user = await this.userRepository.findById(id);
+        if(!user) {
             throw new HttpException('Пользователь не найден!', HttpStatus.NOT_FOUND);
         }
 
         if(dto?.email) {
-            if(await this.getUserByEmail(dto?.email)) {
+            const candidate = await this.getUserByEmail(dto?.email);
+            if(candidate && candidate.id !== id) {
                 throw new HttpException('Пользователь с таким email уже существует!', HttpStatus.BAD_REQUEST);
             }
-            await this.activateUserService.deleteActivationLinkForUser(id);
-            await this.generateAndSaveActivationLink(id, dto?.email);
-            await this.userRepository.findByIdAndUpdate(id, {isActivated: false});
+            if(!candidate) {
+                await this.activateUserService.deleteActivationLinkForUser(id);
+                await this.generateAndSaveActivationLink(id, dto?.email);
+                await this.userRepository.findByIdAndUpdate(id, {isActivated: false});
+            }
         }
 
-        let user;
-        if(dto?.password) {
+        if(dto?.password || dto?.oldPassword) {
+            if(!dto?.oldPassword || !dto?.password || !await bcrypt.compare(dto?.oldPassword, user?.password)) {
+                throw new HttpException('Старый пароль неверный!', HttpStatus.BAD_REQUEST);
+            }
+
             const hashPassword = await bcrypt.hash(dto?.password, 5);
             user = await this.userRepository.findByIdAndUpdate(id,
                 {...dto, password: hashPassword},
@@ -175,13 +231,32 @@ export class UserService {
         return user;
     }
 
+    async resetPassword(id: string, token: string, dto: ResetPasswordDto) {
+        const user = await this.userRepository.findById(id);
+        if(!user) {
+            throw new HttpException('Неверная ссылка или срок ее действия истек!', HttpStatus.BAD_REQUEST);
+        }
+
+        const secret = process.env.JWT_ACCESS_SECRET + user.password + "-" + user._id.getTimestamp();
+        const data = this.tokenService.validateResetPasswordToken(token, secret);
+        if(!data || data?.id !== user.id) {
+            throw new HttpException('Неверная ссылка или срок ее действия истек!', HttpStatus.BAD_REQUEST);
+        }
+
+        const hashPassword = await bcrypt.hash(dto?.password, 5);
+        await this.userRepository.findByIdAndUpdate(
+            user._id,
+            {password: hashPassword}
+        );
+    }
+
     async getUserByEmail(email: string) {
-        return this.userRepository.findOne({email});
+        return this.userRepository.findOne({email}).populate('roles', 'name');
     }
 
     async generateAndSaveActivationLink(userId: string, email: string) {
         const activationLink = uuid.v4();
         await this.activateUserService.addActivationLink(activationLink, userId);
-        await this.mailService.sendActivation(email, `${process.env.API_URL}/api/user/activate/${activationLink}`);
+        await this.mailService.sendActivation(email, `${process.env.REACT_APP_API_URL}/api/user/activate/${activationLink}`);
     }
 }

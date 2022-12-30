@@ -1,7 +1,6 @@
-import {ArgumentMetadata, Injectable, PipeTransform} from "@nestjs/common";
+import {ArgumentMetadata, BadRequestException, Injectable, PipeTransform} from "@nestjs/common";
 import {plainToInstance} from "class-transformer";
 import {validate} from "class-validator";
-import {ValidateException} from "../exceptions/validate.exception";
 
 @Injectable()
 export class ValidationPipe implements PipeTransform<any> {
@@ -17,7 +16,8 @@ export class ValidationPipe implements PipeTransform<any> {
             const messages = errors.map(err => {
                 return `${err.property} - ${Object.values(err.constraints).join(', ')}`;
             })
-            throw new ValidateException(messages);
+            throw new BadRequestException(messages);
+            //throw new ValidateException(messages);
         }
 
         return value;

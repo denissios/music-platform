@@ -38,7 +38,8 @@ import {TrackModule} from "../track/track.module";
     ],
     exports: [
         UserService,
-        BanUserService
+        BanUserService,
+        MailService
     ]
 })
 export class UserModule {}

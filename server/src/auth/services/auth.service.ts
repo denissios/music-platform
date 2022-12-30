@@ -8,13 +8,16 @@ import {InjectModel} from "@nestjs/mongoose";
 import {Model} from "mongoose";
 import {BanUserService} from "../../user/services/ban-user.service";
 import {LoginDto} from "../../user/dto/login.dto";
+import {ForgotPasswordDto} from "../dto/forgot-password.dto";
+import {MailService} from "../../user/services/mail.service";
 
 @Injectable()
 export class AuthService {
     constructor(@InjectModel(User.name) private userRepository: Model<UserDocument>,
                 private userService: UserService,
                 private tokenService: TokenService,
-                private banUserService: BanUserService) {}
+                private banUserService: BanUserService,
+                private mailService: MailService) {}
 
     async registration(dto: RegistrationDto) {
         if(await this.userService.getUserByEmail(dto.email)) {
@@ -48,9 +51,19 @@ export class AuthService {
             throw new UnauthorizedException({message: 'Пользователь не авторизован'});
         }
 
-        const user = await this.userRepository.findById(userData.id);
+        const user = await this.userService.getUser(userData.id);
         await this.banUserService.checkBan(user._id);
         return await this.generateAndSaveTokens(user, refreshToken);
+    }
+
+    async forgotPassword(dto: ForgotPasswordDto) {
+        const user = await this.userService.getUserByEmail(dto.email);
+        if(!user || (user && !user.isActivated)) {
+            throw new HttpException('Пользователь не найден!', HttpStatus.NOT_FOUND);
+        }
+
+        const token = this.tokenService.usePasswordHashToMakeToken(user);
+        await this.mailService.sendPassword(dto.email, `${process.env.CLIENT_URL}/reset-password/${user._id}/${token}`)
     }
 
     private async validateUser(dto: LoginDto) {
